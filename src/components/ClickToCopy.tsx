@@ -16,7 +16,7 @@ function CopiedIcon(): React.JSX.Element {
   )
 }
 
-
+/* Again, I'd make all these const instead of function if possible. */
 function ClickToCopy( {text}: {text: string} ): React.JSX.Element {
   const [copied, setCopied] = useState(false)
 
@@ -25,8 +25,9 @@ function ClickToCopy( {text}: {text: string} ): React.JSX.Element {
       setCopied(false)
     }, 3000)
   }
-
-  const copyToClipboard = async (): Promise<any> => {
+// Avoid the `any` type like the plague. Either use `Promise<void>` or just omit the return type.
+// In Javascript, everything is 'any' type. So explicitly typing something as `any` is redundant.
+  const copyToClipboard = async (): Promise<void> => {
     await navigator.clipboard.writeText(text)
     setCopied(true)
     await resetCopied()
