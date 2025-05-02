@@ -7,6 +7,7 @@ interface TransactionProps {
   transaction: TransactionType
 }
 
+// You don't need to have quotes around the type names in TypeScript
 type MetadataType = {
   "id": string;
   "type": string;
@@ -30,15 +31,25 @@ interface StatusProps {
   status: "SENT" | "PROCESSING" | "RETURNED" | "PENDING" | "FAILED" | "DONE"
 }
 
-function StatusDisplay({ status }: StatusProps): React.JSX.Element {
-  let colorClass = "bg-gray-400"
-
-  if (status === "SENT" || status === "DONE") {
-    colorClass = "bg-success"
-  } else if (status === "PENDING" || status === "PROCESSING") {
-    colorClass = "bg-pending"
-  } else if (status === "FAILED" || status === "RETURNED") {
-    colorClass = "bg-fail"
+const StatusDisplay: React.FC<StatusProps> = ({ status }) => {
+  // This seems like a good use case for a switch statement 
+  let colorClass: string 
+  switch (status) {
+    case "SENT":
+    case "DONE":
+      colorClass = "bg-success"
+      break;
+    case "PENDING":
+    case "PROCESSING":
+      colorClass = "bg-pending"
+      break;
+    case "FAILED":
+    case "RETURNED":
+      colorClass = "bg-fail"
+      break;
+    default:
+      colorClass = "bg-gray-400"
+      break;
   }
 
   return (
@@ -98,7 +109,8 @@ export default Transaction
 
 
 // helper functions
-
+// You do this same thing to format the amount in cents in the formatBalanceData function in the 
+// Account component, so I would move this to a util file and import it in both components
 const formatAmount = (amount_in_cents: number): string => {
   return (amount_in_cents / 100).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 }
