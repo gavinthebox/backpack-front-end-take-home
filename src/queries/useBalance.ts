@@ -1,9 +1,13 @@
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
-import { Balance } from "../components/Account";
 
 type UseBalance = (
   accountId: string
 ) => UseQueryResult<Balance, Error>;
+
+type Balance = {
+  availableBalance: string;
+  pendingBalance: string;
+};
 
 type BalanceResponse = {
   data: {

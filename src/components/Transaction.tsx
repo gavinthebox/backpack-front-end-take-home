@@ -31,7 +31,7 @@ interface StatusProps {
   status: "SENT" | "PROCESSING" | "RETURNED" | "PENDING" | "FAILED" | "DONE"
 }
 
-function StatusDisplay({ status }: StatusProps): React.JSX.Element {
+const StatusDisplay: React.FC<StatusProps> = ({ status }) => {
   // This seems like a good use case for a switch statement 
   let colorClass: string 
   switch (status) {

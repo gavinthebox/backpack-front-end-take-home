@@ -1,8 +1,12 @@
-import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
-import { ChevronDownIcon } from '@heroicons/react/20/solid'
-import ClickToCopy from "./ClickToCopy"
-import ErrorMessage from "./Error"
-import { useBalance } from "../queries/useBalance"
+import {
+  Disclosure,
+  DisclosureButton,
+  DisclosurePanel,
+} from "@headlessui/react";
+import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import ClickToCopy from "./ClickToCopy";
+import ErrorMessage from "./Error";
+import { useBalance } from "../queries/useBalance";
 
 interface AccountProps {
   name: string;
@@ -11,57 +15,64 @@ interface AccountProps {
   routingNumber: string;
 }
 
-export type Balance = {
-  availableBalance: string;
-  pendingBalance: string;
-}
-
-/*
-  Typically in typescript, everything is a const instead of a function. If they are using functions, then by all means 
-  use a function. But this is a little more concise and easier to read IMO.
-*/ 
 const Account: React.FC<AccountProps> = ({
-  name, 
-  id, 
-  accountNumber, 
-  routingNumber
+  name,
+  id,
+  accountNumber,
+  routingNumber,
 }) => {
   const { data: balance, isError } = useBalance(id);
+  const styles = getStyles();
 
   return (
-    <section className="bg-lightGray rounded-lg transition-all duration-500 ease-in">
-      <h2 className="bg-bpBlue p-4 border-b-1 border-bpBlue rounded-t-lg text-lightGray">{name}</h2>
-      {isError ? <ErrorMessage errorData="balance" /> :
-        <div className="p-4 min-h-24 text-gray-600 text-right">
-          <p className="text-4xl">{balance?.availableBalance}</p>
+    <section className={styles.section}>
+      <h2 className={styles.header}>{name}</h2>
+      {isError ? (
+        <ErrorMessage errorData="balance" />
+      ) : (
+        <div className={styles.balanceContainer}>
+          <p className={styles.balanceAmount}>{balance?.availableBalance}</p>
           <p>Available balance</p>
         </div>
-      }
-      <Disclosure as="div" className="p-4">
-        <DisclosureButton className="group flex items-center gap-2 border-transparent border-b-2 hover:border-b-2 hover:border-bpBlue text-bpBlue transition-all hover:cursor-pointer">
+      )}
+      <Disclosure as="div" className={styles.disclosureContainer}>
+        <DisclosureButton className={styles.disclosureButton}>
           <h3>Account Details</h3>
-          <ChevronDownIcon className="w-5 group-data-open:rotate-180 transition-all" />
+          <ChevronDownIcon className={styles.chevronDownIcon} />
         </DisclosureButton>
-        <DisclosurePanel
-          transition
-          className="data-closed:opacity-0 text-gray-600 duration-100 ease-in"
-        >
-          {!isError &&
-            <div className="flex justify-between mt-2 text-lg">
+        <DisclosurePanel transition className={styles.disclosurePanel}>
+          {!isError && (
+            <div className={styles.accountDetails}>
               <p>Pending balance</p>
               <p>{balance?.pendingBalance}</p>
             </div>
-          }
-          <div className="mt-2">
-            <p className="font-medium">Account Number</p>
-            <ClickToCopy text={accountNumber}/>
-            <p className="font-medium">Routing Number</p>
-            <ClickToCopy text={routingNumber}/>
+          )}
+          <div className={styles.accountInfo}>
+            <p className={styles.accountLabel}>Account Number</p>
+            <ClickToCopy text={accountNumber} />
+            <p className={styles.accountLabel}>Routing Number</p>
+            <ClickToCopy text={routingNumber} />
           </div>
         </DisclosurePanel>
       </Disclosure>
     </section>
-  )
-}
+  );
+};
 
-export default Account
+export default Account;
+
+// personally, I like to keep the styles in a separate function to keep the component clean and focused on rendering logic.  
+const getStyles = () => ({
+  section: "bg-lightGray rounded-lg transition-all duration-500 ease-in",
+  header: "bg-bpBlue p-4 border-b-1 border-bpBlue rounded-t-lg text-lightGray",
+  balanceContainer: "p-4 min-h-24 text-gray-600 text-right",
+  balanceAmount: "text-4xl",
+  chevronDownIcon: "w-5 group-data-open:rotate-180 transition-all",
+  disclosureContainer: "p-4",
+  disclosureButton:
+    "group flex items-center gap-2 border-transparent border-b-2 hover:border-b-2 hover:border-bpBlue text-bpBlue transition-all hover:cursor-pointer",
+  disclosurePanel: "data-closed:opacity-0 text-gray-600 duration-100 ease-in",
+  accountDetails: "flex justify-between mt-2 text-lg",
+  accountInfo: "mt-2",
+  accountLabel: "font-medium",
+});
